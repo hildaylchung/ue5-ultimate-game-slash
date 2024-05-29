@@ -25,30 +25,6 @@ void AItems::BeginPlay()
 	// {
 	// 	GEngine->AddOnScreenDebugMessage(1, 60.f, FColor::Cyan, FString("Item OnScreen message"));
 	// }
-
-	UWorld* World = GetWorld();
-
-	// set location and rotation
-	// SetActorLocation(FVector(0.f, 0.f, 50.f));
-	// SetActorRotation(FRotator(0.f, 45.f, 0.f));
-
-	FVector Location = GetActorLocation();
-	FVector Forward = GetActorForwardVector();
-	
-	// Draw debug sphere
-	DRAW_SPHERE(Location);
-
-	// // Draw debug line
-	// DRAW_LINE(Location, Location + Forward * 100.f);
-
-	// // Draw Debug Point
-	// DRAW_POINT(Location + Forward * 100.f);
-
-	// Draw vector macro including both
-	DRAW_VECTOR(Location, Location + Forward * 100.f);
-
-	// Challenge: Draw other debug items
-	DRAW_CAPSULE(Location + Forward * 100.f);
 }
 
 // Called every frame
@@ -56,14 +32,16 @@ void AItems::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	/// ADD log and on screen message
-	// UE_LOG(LogTemp, Warning, TEXT("DeltaTime: %f"), DeltaTime);
+	// Move in units of cm/s
+	float MovementRate = 50.f;
+	float RotationRate = 45.f;
 
-	// if (GEngine)
-	// {
-	// 	FString Name = GetName();
-	// 	FString Message = FString::Printf(TEXT("Item Name: %s"), *Name);
-	// 	GEngine->AddOnScreenDebugMessage(1, 60.f, FColor::Cyan, Message);
-	// }
+	// This calculation makes sure that the actor moves at the same rate / s , no matter of all frame rate (across all devices)
+	// MovmentRate (cm/s) * DeltaTime (s/frame) => cm/frame
+	AddActorWorldOffset(FVector(MovementRate * DeltaTime, 0.f, 0.f));
+	AddActorWorldRotation(FRotator(0.f, RotationRate * DeltaTime, 0.f));
+	
+	DRAW_SPHERE_SingleFrame(GetActorLocation());
+	DRAW_VECTOR_SingleFrame(GetActorLocation(), GetActorLocation() + GetActorForwardVector() * 100.f);
 }
 
