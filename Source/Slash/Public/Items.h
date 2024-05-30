@@ -18,4 +18,36 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	// Blueprint related uproperty cannot be used in private variables
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sine Parameters")
+	float Amplitude;
+
+	// same category with "Sine Parameters"
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SineParameters)
+	float TimeConstant;
+
+	UFUNCTION(BlueprintPure)
+	float TransformedSin();
+
+	UFUNCTION(BlueprintPure)
+	float TransformedCos();
+
+	template<typename T>
+	T Avg(T First, T Second);
+
+private:
+	// meta allow the variable to be exposed in blueprint even it is private
+	// AllowPrivateAccess = "true" or true also valid
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	float RunningTime;
+
+	// also legal but not of the best way to expose variables in header files
+	// float Amplitude = 0.25f;
+	// float TimeConstant = 5.f;
 };
+
+template <typename T>
+inline T AItems::Avg(T First, T Second)
+{
+    return (First + Second) / 2;
+}
