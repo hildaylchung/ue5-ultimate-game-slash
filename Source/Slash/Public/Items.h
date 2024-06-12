@@ -26,6 +26,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SineParameters)
 	float TimeConstant;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float RotationAmount;
+
+	UFUNCTION(BlueprintPure)
+	float RotatedSin();
+
 	UFUNCTION(BlueprintPure)
 	float TransformedSin();
 
@@ -44,6 +50,10 @@ private:
 	// also legal but not of the best way to expose variables in header files
 	// float Amplitude = 0.25f;
 	// float TimeConstant = 5.f;
+
+	// components
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* ItemMesh;
 };
 
 template <typename T>
