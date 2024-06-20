@@ -6,11 +6,16 @@ public class Slash : ModuleRules
 {
 	public Slash(ReadOnlyTargetRules Target) : base(Target)
 	{
+		
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
 
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "ActionRPG" });
+
+		PrivateDependencyModuleNames.AddRange(
+			new string[] {
+				"GameplayAbilities"
+			}
+		);
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
