@@ -5,7 +5,8 @@
 			"path": "."
 		},
 		{
-			"path": "../ActionRPG 5.3"
+			"name": "UE5",
+			"path": "/Users/Shared/Epic Games/UE_5.3"
 		}
 	],
 	"settings": {
