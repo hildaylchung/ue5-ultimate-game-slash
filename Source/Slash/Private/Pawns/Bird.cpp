@@ -85,7 +85,7 @@ void ABird::BeginPlay()
 // }
 
 void ABird::Move(const FInputActionValue &Value) {
-        const FVector2D MoveValue = Value.Get<FVector2D>();
+	const FVector2D MoveValue = Value.Get<FVector2D>();
 	if (GetController()) {
 		if (MoveValue.X != 0.f) {
 			FVector Forward = GetActorForwardVector();
