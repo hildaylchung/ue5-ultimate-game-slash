@@ -11,11 +11,7 @@ public class Slash : ModuleRules
 
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "ActionRPG", "Niagara", "HairStrandsCore"  });
 
-		PrivateDependencyModuleNames.AddRange(
-			new string[] {
-				"GameplayAbilities"
-			}
-		);
+		PrivateDependencyModuleNames.AddRange(new string[] {});
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
