@@ -93,7 +93,7 @@ void ASlashCharacter::Look(const FInputActionValue &Value) {
 
 void ASlashCharacter::Jump()
 {
-
+	ACharacter::Jump();
 }
 
 void ASlashCharacter::Dodge() {}
