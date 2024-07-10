@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Items.generated.h"
+#include "Item.generated.h"
 
 
 class USphereComponent;
 
 UCLASS()
-class SLASH_API AItems : public AActor
+class SLASH_API AItem : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
-	AItems();
+	AItem();
     virtual void Tick(float DeltaTime) override;
 
 protected:
@@ -50,6 +50,9 @@ protected:
 	UFUNCTION()
 	virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UStaticMeshComponent* ItemMesh;
+
 private:
 	// meta allow the variable to be exposed in blueprint even it is private
 	// AllowPrivateAccess = "true" or true also valid
@@ -62,14 +65,11 @@ private:
 
 	// components
 	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* ItemMesh;
-
-	UPROPERTY(VisibleAnywhere)
 	USphereComponent* SphereComponent;
 };
 
 template <typename T>
-inline T AItems::Avg(T First, T Second)
+inline T AItem::Avg(T First, T Second)
 {
     return (First + Second) / 2;
 }

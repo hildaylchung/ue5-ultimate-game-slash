@@ -2,11 +2,12 @@
 
 
 #include "Slash/DebugMacros.h"
-#include "Items/Items.h"
+#include "Items/Item.h"
 #include "Components/SphereComponent.h"
+#include "Characters/SlashCharacter.h"
 
 // Sets default values
-AItems::AItems() : Amplitude(0.25f), TimeConstant(5.f), RotationAmount(5.f)
+AItem::AItem() : Amplitude(0.25f), TimeConstant(5.f), RotationAmount(5.f)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -26,7 +27,7 @@ AItems::AItems() : Amplitude(0.25f), TimeConstant(5.f), RotationAmount(5.f)
 }
 
 // Called when the game starts or when spawned
-void AItems::BeginPlay()
+void AItem::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -39,43 +40,39 @@ void AItems::BeginPlay()
 	// }
 
 	// bind a callback OnSphereOverlap to OnComponentBeginOverlap delegate
-	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AItems::OnSphereOverlap);
-	SphereComponent->OnComponentEndOverlap.AddDynamic(this, &AItems::OnSphereEndOverlap);
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AItem::OnSphereOverlap);
+	SphereComponent->OnComponentEndOverlap.AddDynamic(this, &AItem::OnSphereEndOverlap);
 }
 
-float AItems::RotatedSin()
+float AItem::RotatedSin()
 {
     return FMath::Abs(RotationAmount * FMath::Sin(RunningTime));
 }
 
-float AItems::TransformedSin() 
+float AItem::TransformedSin() 
 {
     return Amplitude * FMath::Sin(RunningTime * TimeConstant); // period of wave = 2*pi/TimeConstant
 }
 
-float AItems::TransformedCos()
+float AItem::TransformedCos()
 {
     return Amplitude * FMath::Cos(RunningTime * TimeConstant); // period of wave = 2*pi/TimeConstant
 }
 
-void AItems::OnSphereOverlap(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
+void AItem::OnSphereOverlap(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
 {
-	const FString OtherActorName =  OtherActor->GetName();
-
-	if (GEngine) {
-		GEngine->AddOnScreenDebugMessage(1, 30.f, FColor::Red, OtherActorName);
+    if (ASlashCharacter* Character = Cast<ASlashCharacter>(OtherActor)) {
+		Character->SetOverlappingItem(this);
 	}
 }
-void AItems::OnSphereEndOverlap(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex)
+void AItem::OnSphereEndOverlap(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex)
 {
-	const FString OtherActorName = FString("End overlap with: ") +  OtherActor->GetName();
-
-	if (GEngine) {
-		GEngine->AddOnScreenDebugMessage(1, 30.f, FColor::Blue, OtherActorName);
+    if (ASlashCharacter* Character = Cast<ASlashCharacter>(OtherActor)) {
+		Character->SetOverlappingItem(nullptr);
 	}
 }
 
-void AItems::Tick(float DeltaTime)
+void AItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	RunningTime += DeltaTime;

@@ -20,7 +20,7 @@ ABird::ABird()
 	Capsule->SetCapsuleRadius(15.f);
 
 	// setting root component
-	// Method 1: Same with Items.cpp
+	// Method 1: Same with Item.cpp
 	// RootComponent = Capsule;
 	
 	// Method 2: with inherited setter method function

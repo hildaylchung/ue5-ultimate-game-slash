@@ -9,6 +9,8 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h" 
 #include "GroomComponent.h" 
+#include "Items/Item.h"
+#include "Weapons/Weapon.h"
 
 // Sets default values
 ASlashCharacter::ASlashCharacter()
@@ -97,7 +99,13 @@ void ASlashCharacter::Jump()
 }
 
 void ASlashCharacter::Dodge() {}
-void ASlashCharacter::EKeyPressed() {}
+void ASlashCharacter::EKeyPressed() {
+	if (AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem)) {
+		OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"));
+		CharacterState = ECharacterState::ESC_EquippedOneHandedWeapon;
+	}
+}
+
 void ASlashCharacter::Attack() {}
 void ASlashCharacter::Tick(float DeltaTime) { Super::Tick(DeltaTime); }
 
