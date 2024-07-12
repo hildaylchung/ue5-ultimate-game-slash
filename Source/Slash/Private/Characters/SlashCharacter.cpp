@@ -11,6 +11,7 @@
 #include "GroomComponent.h" 
 #include "Items/Item.h"
 #include "Weapons/Weapon.h"
+#include "Animation/AnimInstance.h"
 
 // Sets default values
 ASlashCharacter::ASlashCharacter()
@@ -58,7 +59,7 @@ void ASlashCharacter::BeginPlay()
 }
 
 void ASlashCharacter::Move(const FInputActionValue &Value) {
-	// if (ActionState != EActionState::EAS_Unoccupied) return;
+	if (ActionState != EActionState::EAS_Unoccupied) return;
 
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 
@@ -102,11 +103,51 @@ void ASlashCharacter::Dodge() {}
 void ASlashCharacter::EKeyPressed() {
 	if (AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem)) {
 		OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"));
-		CharacterState = ECharacterState::ESC_EquippedOneHandedWeapon;
+		if (OverlappingWeapon->GetIsTwoHanded()) {
+			CharacterState = ECharacterState::ESC_EquippedTwoHandedWeapon;
+		} else {
+			CharacterState = ECharacterState::ESC_EquippedOneHandedWeapon;
+		}
 	}
 }
 
-void ASlashCharacter::Attack() {}
+void ASlashCharacter::Attack() {
+	if (CanAttack()) {
+		PlayAttackMontage();
+		ActionState = EActionState::EAS_Attacking;
+	}
+}
+
+void ASlashCharacter::PlayAttackMontage() {
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && AttackMontage) {
+		AnimInstance->Montage_Play(AttackMontage);
+		const int32 Selection = FMath::RandRange(0, 1);
+		FName SectionName = FName();
+		switch (Selection) {
+		case 0:
+			SectionName = FName("Attack1");
+			break;
+		case 1: 
+			SectionName = FName("Attack2");
+			break;
+		default:
+			break;
+		}
+		AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
+	}
+}
+
+void ASlashCharacter::AttackEnd()
+{
+	ActionState = EActionState::EAS_Unoccupied;
+}
+
+bool ASlashCharacter::CanAttack()
+{
+    return CharacterState != ECharacterState::ECS_Unequipped &&
+	 	ActionState == EActionState::EAS_Unoccupied;;
+}
 void ASlashCharacter::Tick(float DeltaTime) { Super::Tick(DeltaTime); }
 
 // Called to bind functionality to input
@@ -121,8 +162,8 @@ void ASlashCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASlashCharacter::Look);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ASlashCharacter::Jump);
 		EnhancedInputComponent->BindAction(EKeyAction, ETriggerEvent::Triggered, this, &ASlashCharacter::EKeyPressed);
-		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &ASlashCharacter::Dodge);
-		EnhancedInputComponent->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &ASlashCharacter::Attack);
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &ASlashCharacter::Attack);
+		EnhancedInputComponent->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &ASlashCharacter::Dodge);
 	}
 }
 

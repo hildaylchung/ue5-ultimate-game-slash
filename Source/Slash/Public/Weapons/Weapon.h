@@ -15,6 +15,7 @@ class SLASH_API AWeapon : public AItem
 	GENERATED_BODY()
 	
 public:
+	bool GetIsTwoHanded() { return bIsTwoHanded; };
 	void Equip(USceneComponent* InParent, FName InSocketName);
 
 protected:
@@ -22,4 +23,7 @@ protected:
 	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
 
 	virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsTwoHanded;
 };
