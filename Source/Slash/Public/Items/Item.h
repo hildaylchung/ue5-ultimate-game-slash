@@ -60,6 +60,10 @@ protected:
 
 	EItemState ItemState = EItemState::EIS_Hovering;
 
+	// components
+	UPROPERTY(VisibleAnywhere)
+	USphereComponent* SphereComponent;
+
 private:
 	// meta allow the variable to be exposed in blueprint even it is private
 	// AllowPrivateAccess = "true" or true also valid
@@ -70,9 +74,6 @@ private:
 	// float Amplitude = 0.25f;
 	// float TimeConstant = 5.f;
 
-	// components
-	UPROPERTY(VisibleAnywhere)
-	USphereComponent* SphereComponent;
 };
 
 template <typename T>

@@ -103,12 +103,25 @@ void ASlashCharacter::Dodge() {}
 void ASlashCharacter::EKeyPressed() {
 	if (AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem)) {
 		OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"));
+		EquippedWeapon = OverlappingWeapon; 
+		OverlappingItem = nullptr;
 		if (OverlappingWeapon->GetIsTwoHanded()) {
 			CharacterState = ECharacterState::ESC_EquippedTwoHandedWeapon;
 		} else {
 			CharacterState = ECharacterState::ESC_EquippedOneHandedWeapon;
 		}
+	} else {
+		if (CanDisarm()) {
+			PlayEquipMontage(FName("Unequip"));
+			ActionState = EActionState::EAS_EquippingWeapon;
+			CharacterState = ECharacterState::ECS_Unequipped;
+		} else if (CanArm()) { 
+			PlayEquipMontage(FName("Equip"));
+			ActionState = EActionState::EAS_EquippingWeapon;
+			CharacterState = ECharacterState::ESC_EquippedOneHandedWeapon;
+		}
 	}
+	
 }
 
 void ASlashCharacter::Attack() {
@@ -122,22 +135,21 @@ void ASlashCharacter::PlayAttackMontage() {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && AttackMontage) {
 		AnimInstance->Montage_Play(AttackMontage);
-		const int32 Selection = FMath::RandRange(0, 1);
-		FName SectionName = FName();
-		switch (Selection) {
-		case 0:
-			SectionName = FName("Attack1");
-			break;
-		case 1: 
-			SectionName = FName("Attack2");
-			break;
-		default:
-			break;
-		}
+		const int32 Selection = FMath::RandRange(0, 3);
+		FString SectionNameString = FString::Printf(TEXT("Attack%d"), Selection + 1);
+		FName SectionName = FName(SectionNameString);
 		AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
 	}
 }
 
+void ASlashCharacter::PlayEquipMontage(FName SectionName)
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && EquipMontage) {
+		AnimInstance->Montage_Play(EquipMontage);
+		AnimInstance->Montage_JumpToSection(SectionName, EquipMontage);
+	}
+}
 void ASlashCharacter::AttackEnd()
 {
 	ActionState = EActionState::EAS_Unoccupied;
@@ -146,10 +158,38 @@ void ASlashCharacter::AttackEnd()
 bool ASlashCharacter::CanAttack()
 {
     return CharacterState != ECharacterState::ECS_Unequipped &&
-	 	ActionState == EActionState::EAS_Unoccupied;;
+	 	ActionState == EActionState::EAS_Unoccupied;
 }
-void ASlashCharacter::Tick(float DeltaTime) { Super::Tick(DeltaTime); }
+bool ASlashCharacter::CanDisarm()
+{
+    return ActionState == EActionState::EAS_Unoccupied &&
+		CharacterState != ECharacterState::ECS_Unequipped;
+}
+bool ASlashCharacter::CanArm()
+{
+    return ActionState == EActionState::EAS_Unoccupied &&
+		CharacterState == ECharacterState::ECS_Unequipped &&
+		EquippedWeapon;
+}
+void ASlashCharacter::Disarm()
+{
+	if (EquippedWeapon) {
+		EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("SpineSocket"));
+	}
+}
+void ASlashCharacter::Arm()
+{
+	if (EquippedWeapon) {
+		EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("RightHandSocket"));
+	}
+}
+void ASlashCharacter::FinishEquipping()
+{
+	ActionState = EActionState::EAS_Unoccupied;
+}
 
+
+void ASlashCharacter::Tick(float DeltaTime) { Super::Tick(DeltaTime); }
 // Called to bind functionality to input
 void ASlashCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {

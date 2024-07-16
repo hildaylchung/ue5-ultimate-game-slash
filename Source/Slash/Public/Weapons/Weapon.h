@@ -6,6 +6,8 @@
 #include "Items/Item.h"
 #include "Weapon.generated.h"
 
+class USoundBase;
+
 /**
  * 
  */
@@ -17,6 +19,7 @@ class SLASH_API AWeapon : public AItem
 public:
 	bool GetIsTwoHanded() { return bIsTwoHanded; };
 	void Equip(USceneComponent* InParent, FName InSocketName);
+	void AttachMeshToSocket(USceneComponent *InParent, const FName& InSocketName);
 
 protected:
 	// UFUNCTION() need to be commented in inherited class
@@ -26,4 +29,8 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsTwoHanded;
+
+private:
+	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
+	USoundBase* EquipSound;
 };
