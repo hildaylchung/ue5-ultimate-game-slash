@@ -7,6 +7,7 @@
 #include "Components/SphereComponent.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/KismetSystemLibrary.h" 
+#include "Interfaces/HitInterface.h"
 
 AWeapon::AWeapon() {
 	WeaponBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Weapon Box"));
@@ -57,6 +58,10 @@ void AWeapon::AttachMeshToSocket(USceneComponent *InParent, const FName& InSocke
     FAttachmentTransformRules TransformRules(EAttachmentRule::SnapToTarget, true);
     ItemMesh->AttachToComponent(InParent, TransformRules, InSocketName);
 }
+void AWeapon::ResetIgnoreActors()
+{
+    IgnoreActors.Empty();
+}
 void AWeapon::OnBoxOverlap(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult) {
     const FVector Start = BoxTraceStart-> GetComponentLocation();
     const FVector End = BoxTraceEnd-> GetComponentLocation();
@@ -64,6 +69,11 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent *OverlappedComponent, AActor *Oth
     TArray<AActor*> ActorsToIgnore;
     ActorsToIgnore.Add(this);
 
+    for (AActor* Actor : IgnoreActors) {
+        ActorsToIgnore.AddUnique(Actor);
+    }
+
+    // HitResult will be stored in variable BoxHit
     FHitResult BoxHit;
     
     UKismetSystemLibrary::BoxTraceSingle(
@@ -80,4 +90,10 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent *OverlappedComponent, AActor *Oth
         true
     );
 
+    if (BoxHit.GetActor()) {
+        if (IHitInterface* HitInterface = Cast<IHitInterface>(BoxHit.GetActor())) {
+            HitInterface->GetHit(BoxHit.ImpactPoint);
+        }
+        IgnoreActors.AddUnique(BoxHit.GetActor());
+    }
 }

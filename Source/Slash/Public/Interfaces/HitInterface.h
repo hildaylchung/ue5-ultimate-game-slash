@@ -23,6 +23,6 @@ class SLASH_API IHitInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	// use = 0 for declaring pure virtual function 
-	// i.e. it cannot declare function content in the current class, only in the inherited class
-	virtual void GetHit() = 0;
+	// i.e. it can only be defined in the inherited class
+	virtual void GetHit(const FVector& ImpactPoint) = 0;
 };

@@ -26,6 +26,7 @@ public:
 
 	void Equip(USceneComponent* InParent, FName InSocketName);
 	void AttachMeshToSocket(USceneComponent *InParent, const FName& InSocketName);
+	void ResetIgnoreActors();
 
 protected:
 	virtual void BeginPlay() override;
@@ -54,4 +55,5 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* BoxTraceEnd;
 
+	TArray<AActor*> IgnoreActors;
 };
