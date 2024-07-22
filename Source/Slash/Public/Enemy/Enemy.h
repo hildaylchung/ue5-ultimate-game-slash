@@ -42,4 +42,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = Animation)
 	UAnimMontage* HitReactMontage;
+
+	UPROPERTY(EditAnywhere, Category = Sounds)
+	USoundBase* HitSound;
 };
