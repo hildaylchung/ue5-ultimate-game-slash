@@ -34,13 +34,26 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AEnemy::GetHit(const FVector& ImpactPoint)
 {
-	DRAW_SPHERE_COLOR(ImpactPoint, FColor::Orange);
+	// DRAW_SPHERE_COLOR(ImpactPoint, FColor::Orange);
 	DirectionalHitReact(ImpactPoint);
 
 	// play hit sound
     if (HitSound) {
-        UGameplayStatics::PlaySoundAtLocation(this, HitSound, ImpactPoint);
+        UGameplayStatics::PlaySoundAtLocation(
+			this,
+			HitSound,
+			ImpactPoint
+		);
     }
+
+	// blood hit particles effect
+	if (HitParticles) {
+		UGameplayStatics::SpawnEmitterAtLocation(
+			this,
+			HitParticles,
+			ImpactPoint
+		);
+	}
 }
 
 // determine which direction attack is from
@@ -81,6 +94,8 @@ void AEnemy::DirectionalHitReact(const FVector &ImpactPoint)
 	if (CrossProduct.Z < 0) {
 		Degrees *= -1.f;
 	}
+
+	/** Debug
 	/// Alternatively, use GetActorRightVector() or so with DotProduct to determine the direction
 	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + CrossProduct * 100, 5.f, FColor::Blue, 5.f);
 
@@ -92,6 +107,7 @@ void AEnemy::DirectionalHitReact(const FVector &ImpactPoint)
 	// forward vector and toHit vector
 	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + Forward * 60, 5.f, FColor::Red, 5.f);
 	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + ToHit, 5.f, FColor::Green, 5.f);
+	 */
 
 	FName SectionName = FName("FromBack");
 	if (Degrees >= -45.f && Degrees < 45.f) {
