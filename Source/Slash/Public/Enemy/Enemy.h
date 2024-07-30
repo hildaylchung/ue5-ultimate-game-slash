@@ -23,7 +23,7 @@ public:
 	/*
 	*	Override functions
 	*/
-	void GetHit(const FVector& ImpactPoint) override;
+	void GetHit_Implementation(const FVector& ImpactPoint) override;
 	void DirectionalHitReact(const FVector& ImpactPoint);
 
 	/**

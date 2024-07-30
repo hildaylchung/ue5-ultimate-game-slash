@@ -92,7 +92,9 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent *OverlappedComponent, AActor *Oth
 
     if (BoxHit.GetActor()) {
         if (IHitInterface* HitInterface = Cast<IHitInterface>(BoxHit.GetActor())) {
-            HitInterface->GetHit(BoxHit.ImpactPoint);
+            // blueprint native event
+            // call GetHit_Implementation instead of blueprint if available
+            HitInterface->Execute_GetHit(BoxHit.GetActor(), BoxHit.ImpactPoint);
         }
         
         IgnoreActors.AddUnique(BoxHit.GetActor());

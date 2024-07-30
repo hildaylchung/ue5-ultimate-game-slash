@@ -24,5 +24,6 @@ class SLASH_API IHitInterface
 public:
 	// use = 0 for declaring pure virtual function 
 	// i.e. it can only be defined in the inherited class
-	virtual void GetHit(const FVector& ImpactPoint) = 0;
+	UFUNCTION(BlueprintNativeEvent)
+	void GetHit(const FVector& ImpactPoint);
 };
