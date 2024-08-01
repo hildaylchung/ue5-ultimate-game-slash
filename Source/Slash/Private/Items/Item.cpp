@@ -5,6 +5,7 @@
 #include "Items/Item.h"
 #include "Components/SphereComponent.h"
 #include "Characters/SlashCharacter.h"
+#include "NiagaraComponent.h"
 
 // Sets default values
 AItem::AItem() : Amplitude(0.25f), TimeConstant(5.f), RotationAmount(5.f)
@@ -24,6 +25,9 @@ AItem::AItem() : Amplitude(0.25f), TimeConstant(5.f), RotationAmount(5.f)
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	SphereComponent->InitSphereRadius(300.0f);
 	SphereComponent->SetupAttachment(GetRootComponent());
+
+	EmbersEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Embers"));
+	EmbersEffect->SetupAttachment(GetRootComponent());
 }
 
 // Called when the game starts or when spawned
@@ -62,7 +66,7 @@ float AItem::TransformedCos()
 void AItem::OnSphereOverlap(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
 {
     if (ASlashCharacter* Character = Cast<ASlashCharacter>(OtherActor)) {
-		Character->SetOverlappingItem(this);
+		Character->SetOverlappingItem(this); 
 	}
 }
 void AItem::OnSphereEndOverlap(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex)

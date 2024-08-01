@@ -8,6 +8,7 @@
 
 
 class USphereComponent;
+class UNiagaraComponent;
 
 enum class EItemState : uint8 {
 	EIS_Hovering,
@@ -63,6 +64,9 @@ protected:
 	// components
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* SphereComponent;
+
+	UPROPERTY(EditAnywhere)
+	UNiagaraComponent* EmbersEffect;
 
 private:
 	// meta allow the variable to be exposed in blueprint even it is private
