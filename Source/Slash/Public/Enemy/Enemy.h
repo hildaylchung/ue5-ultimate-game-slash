@@ -8,6 +8,8 @@
 #include "Enemy.generated.h"
 
 class UAnimMontage;
+class UAttributeComponent;
+class UHealthBarComponent;
 
 UCLASS()
 class SLASH_API AEnemy : public ACharacter, public IHitInterface
@@ -25,6 +27,7 @@ public:
 	*/
 	void GetHit_Implementation(const FVector& ImpactPoint) override;
 	void DirectionalHitReact(const FVector& ImpactPoint);
+	float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	/**
 	 *  Animation Montages
@@ -32,10 +35,17 @@ public:
 
 	void PlayHitReactMontage(const FName& SectionName);
 
+
 protected:
 	virtual void BeginPlay() override;
 
 private:
+	UPROPERTY(VisibleAnywhere)
+	UAttributeComponent* Attributes;
+
+	UPROPERTY(VisibleAnywhere)
+	UHealthBarComponent* HealthBarWidget;
+
 	/** 
 	 * Animation Montages
 	 */
@@ -48,4 +58,5 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = VisualEffects)
 	UParticleSystem* HitParticles;
+
 };

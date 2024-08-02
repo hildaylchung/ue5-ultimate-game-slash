@@ -103,7 +103,7 @@ void ASlashCharacter::Jump()
 void ASlashCharacter::Dodge() {}
 void ASlashCharacter::EKeyPressed() {
 	if (AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem)) {
-		OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"));
+		OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"), this, this);
 		EquippedWeapon = OverlappingWeapon; 
 		OverlappingItem = nullptr;
 		if (OverlappingWeapon->GetIsTwoHanded()) {

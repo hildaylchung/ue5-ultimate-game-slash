@@ -24,7 +24,7 @@ public:
 	FORCEINLINE bool GetIsTwoHanded() { return bIsTwoHanded; };
 	FORCEINLINE UBoxComponent* GetWeaponBox() { return WeaponBox; };
 
-	void Equip(USceneComponent* InParent, FName InSocketName);
+	void Equip(USceneComponent* InParent, FName InSocketName, AActor* NewOwner, APawn* NewInstigator);
 	void AttachMeshToSocket(USceneComponent *InParent, const FName& InSocketName);
 	void ResetIgnoreActors();
 
@@ -46,6 +46,9 @@ protected:
 	bool bIsTwoHanded;
 
 private:
+	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
+	float Damage = 20;
+
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 	USoundBase* EquipSound;
 
