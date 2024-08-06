@@ -19,6 +19,7 @@ public:
 	
 	void ReceiveDamage(float Damage);
 	float GetHealthPercent();
+	bool IsAlive();
 
 protected:
 	virtual void BeginPlay() override;
@@ -30,10 +31,4 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Actor Attributes")
 	float MaxHealth;
-
-	UPROPERTY(EditAnywhere, Category = "Actor Attributes")
-	float Gold;
-		
-	UPROPERTY(EditAnywhere, Category = "Actor Attributes")
-	float ExperiencePt;
 };
