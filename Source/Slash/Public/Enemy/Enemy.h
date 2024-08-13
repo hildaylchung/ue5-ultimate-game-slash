@@ -11,6 +11,8 @@
 class UAnimMontage;
 class UAttributeComponent;
 class UHealthBarComponent;
+class AAIController;
+class UPawnSensingComponent;
 
 UCLASS()
 class SLASH_API AEnemy : public ACharacter, public IHitInterface
@@ -45,14 +47,32 @@ protected:
 	virtual void BeginPlay() override;
 
 	void Die();
+	bool InTargetRange(AActor* Target, double Radius); 
+	void MoveToTarget(AActor* Target);
+	AActor* ChoosePatrolTarget();
+
+	UFUNCTION()
+	void PawnSeen(APawn* SeenPawn);
 
 private:
+	/*
+	* States
+	*/
+
+	EEnemyState EnemyState = EEnemyState::EES_Patrolling;
+
+	/*
+	* Components
+	*/
 
 	UPROPERTY(VisibleAnywhere)
 	UAttributeComponent* Attributes;
 
 	UPROPERTY(VisibleAnywhere)
 	UHealthBarComponent* HealthBarWidget;
+
+	UPROPERTY(VisibleAnywhere)
+	UPawnSensingComponent* PawnSensing;
 
 	/** 
 	 * Animation Montages
@@ -75,5 +95,41 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	double CombatRadius = 500.f;
+	
+	UPROPERTY(EditAnywhere)
+	double AttackRadius = 150.f;
+
+	void ChaseTarget(AActor* Target);
+
+	/* 
+	* Navigation
+	*/
+
+	UPROPERTY()
+	AAIController* EnemyController;
+
+	// Current patrol target
+	UPROPERTY(EditInstanceOnly, Category = "AI Navigation")
+	AActor* PatrolTarget;
+
+	UPROPERTY(EditInstanceOnly, Category = "AI Navigation")
+	TArray<AActor*> PatrolTargets;
+
+	UPROPERTY(EditInstanceOnly)
+	double PatrolRadius = 200.f;
+
+	UPROPERTY(EditInstanceOnly, Category = "AI Navigation")
+	float WaitMin = 5.f;
+
+	UPROPERTY(EditInstanceOnly, Category = "AI Navigation")
+	float WaitMax = 10.f;
+
+	FTimerHandle PatrolTimer;
+
+	void PatrolTimerFinished();
+
+
+	void CheckCombatTarget();
+	void CheckPatrolTarget();
 
 };
