@@ -20,6 +20,8 @@ AItem::AItem() : Amplitude(0.25f), TimeConstant(5.f), RotationAmount(5.f)
 	// create component named ItemMeshComponent
 	// and assign it to root component
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMeshComponent"));
+    ItemMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+    ItemMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	RootComponent = ItemMesh;
 
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));

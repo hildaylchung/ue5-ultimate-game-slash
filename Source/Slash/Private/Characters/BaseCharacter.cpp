@@ -5,6 +5,10 @@
 #include "Weapons/Weapon.h"
 #include "Components/BoxComponent.h"
 #include "Components/AttributeComponent.h"
+#include "Components/CapsuleComponent.h" 
+#include "Kismet/GameplayStatics.h"
+
+#include "Slash/DebugMacros.h"
 
 ABaseCharacter::ABaseCharacter()
 {
@@ -23,14 +27,18 @@ void ABaseCharacter::Attack()
 {
 }
 void ABaseCharacter::Die() {}
-void ABaseCharacter::PlayAttackMontage() {}
-void ABaseCharacter::PlayHitReactMontage(const FName &SectionName)
+
+int32 ABaseCharacter::PlayAttackMontage() {
+	return PlayRandomMontageSection(AttackMontage);
+}
+
+int32 ABaseCharacter::PlayDeathMontage()
 {
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance && HitReactMontage) {
-		AnimInstance->Montage_Play(HitReactMontage);
-		AnimInstance->Montage_JumpToSection(SectionName, HitReactMontage);
-	}
+	return PlayRandomMontageSection(DeathMontage);
+}
+
+void ABaseCharacter::PlayHitReactMontage(const FName &SectionName) {
+	PlayMontageSection(HitReactMontage, SectionName);
 }
 
 // determine which direction attack is from
@@ -97,9 +105,58 @@ void ABaseCharacter::DirectionalHitReact(const FVector &ImpactPoint)
 	// play animation montage
 	PlayHitReactMontage(SectionName);
 }
+void ABaseCharacter::PlayHitSound(const FVector &ImpactPoint)
+{
+	// play hit sound
+    if (HitSound) {
+        UGameplayStatics::PlaySoundAtLocation(
+			this,
+			HitSound,
+			ImpactPoint
+		);
+    }
+}
+void ABaseCharacter::SpawnHitParticles(const FVector &ImpactPoint)
+{
+	if (HitParticles) {
+		UGameplayStatics::SpawnEmitterAtLocation(
+			this,
+			HitParticles,
+			ImpactPoint
+		);
+	}
+}
+
+void ABaseCharacter::HandleDamage(float DamageAmount)
+{
+	if (Attributes) {
+		Attributes->ReceiveDamage(DamageAmount);
+	}
+}
+void ABaseCharacter::PlayMontageSection(UAnimMontage *Montage, const FName &SectionName)
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && Montage) {
+		AnimInstance->Montage_Play(Montage);
+		AnimInstance->Montage_JumpToSection(SectionName, Montage);
+	}
+}
+int32 ABaseCharacter::PlayRandomMontageSection(UAnimMontage *Montage)
+{
+	const int32 NumMontageSections = Montage->GetNumSections();  
+	if (NumMontageSections <= 0) return -1; 
+	const int32 Selection = FMath::RandRange(0, NumMontageSections -1);
+	const FName Section = Montage->GetSectionName(Selection);
+	PlayMontageSection(Montage, Section);
+    return Selection;
+}
 bool ABaseCharacter::CanAttack()
 {
     return false;
+}
+bool ABaseCharacter::IsAlive()
+{
+    return Attributes && Attributes->IsAlive();
 }
 void ABaseCharacter::AttackEnd() {}
 void ABaseCharacter::SetWeaponCollisionEnabled(
@@ -112,6 +169,9 @@ void ABaseCharacter::SetWeaponCollisionEnabled(
 void ABaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
  
+void ABaseCharacter::DisableCapsuleCollision()
+{
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}

@@ -29,14 +29,19 @@ protected:
 	virtual void Attack();
 	virtual void Die();
 	
-	/**
-	 *  Animation Montages
-	 */
-	virtual void PlayAttackMontage();
+	void PlayMontageSection(UAnimMontage* Montage, const FName& SectionName);
+	int32 PlayRandomMontageSection(UAnimMontage* Montage);
+	virtual int32 PlayAttackMontage();
+	virtual int32 PlayDeathMontage();
 	void PlayHitReactMontage(const FName& SectionName);
 	void DirectionalHitReact(const FVector& ImpactPoint);
+	void PlayHitSound(const FVector& ImpactPoint);
+	void SpawnHitParticles(const FVector& ImpactPoint);
+	virtual void HandleDamage(float DamageAmount);
+	void DisableCapsuleCollision();
 
 	virtual bool CanAttack();
+	bool IsAlive();
 
 	UFUNCTION(BlueprintCallable)
 	virtual void AttackEnd();
@@ -51,12 +56,6 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UAttributeComponent* Attributes;
 
-	UPROPERTY(EditAnywhere, Category = Sounds)
-	USoundBase* HitSound;
-
-	UPROPERTY(EditAnywhere, Category = VisualEffects)
-	UParticleSystem* HitParticles;
-
 	/** 
 	 * Animation Montages
 	 */
@@ -65,8 +64,15 @@ protected:
 	UAnimMontage* AttackMontage;
 	
 	UPROPERTY(EditDefaultsOnly, Category = Animation)
-	UAnimMontage* HitReactMontage;
+	UAnimMontage* DeathMontage;
 
 	UPROPERTY(EditDefaultsOnly, Category = Animation)
-	UAnimMontage* DeathMontage;
+	UAnimMontage* HitReactMontage;
+
+private:
+	UPROPERTY(EditAnywhere, Category = Sounds)
+	USoundBase* HitSound;
+
+	UPROPERTY(EditAnywhere, Category = VisualEffects)
+	UParticleSystem* HitParticles;
 };

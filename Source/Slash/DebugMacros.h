@@ -25,3 +25,5 @@
 
 #define DRAW_CAPSULE(Location) if (GetWorld()) DrawDebugCapsule(GetWorld(), Location, 50, 20.f, FQuat::Identity, FColor::Blue, true);
 #define DRAW_CAPSULE_SingleFrame(Location) if (GetWorld()) DrawDebugCapsule(GetWorld(), Location, 50, 20.f, FQuat::Identity, FColor::Blue, false, -1.f);
+
+#define DEBUG_MSG(MessageStr) if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Green, MessageStr);

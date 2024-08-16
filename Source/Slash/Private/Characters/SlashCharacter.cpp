@@ -13,6 +13,9 @@
 #include "Weapons/Weapon.h"
 #include "Animation/AnimInstance.h"
 
+#include "Slash/DebugMacros.h"
+
+
 // Sets default values
 ASlashCharacter::ASlashCharacter()
 {
@@ -114,12 +117,12 @@ void ASlashCharacter::EKeyPressed() {
 		}
 	} else {
 		if (CanDisarm()) {
-			PlayEquipMontage(FName("Unequip"));
 			ActionState = EActionState::EAS_EquippingWeapon;
+			PlayEquipMontage(FName("Unequip"));
 			CharacterState = ECharacterState::ECS_Unequipped;
 		} else if (CanArm()) { 
-			PlayEquipMontage(FName("Equip"));
 			ActionState = EActionState::EAS_EquippingWeapon;
+			PlayEquipMontage(FName("Equip"));
 			CharacterState = ECharacterState::ESC_EquippedOneHandedWeapon;
 		}
 	}
@@ -127,20 +130,11 @@ void ASlashCharacter::EKeyPressed() {
 }
 
 void ASlashCharacter::Attack() {
+	Super::Attack();
+
 	if (CanAttack()) {
 		PlayAttackMontage();
 		ActionState = EActionState::EAS_Attacking;
-	}
-}
-
-void ASlashCharacter::PlayAttackMontage() {
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance && AttackMontage) {
-		AnimInstance->Montage_Play(AttackMontage);
-		const int32 Selection = FMath::RandRange(0, 3);
-		FString SectionNameString = FString::Printf(TEXT("Attack%d"), Selection + 1);
-		FName SectionName = FName(SectionNameString);
-		AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
 	}
 }
 
@@ -187,6 +181,7 @@ void ASlashCharacter::Arm()
 }
 void ASlashCharacter::FinishEquipping()
 {
+	DEBUG_MSG(TEXT("FinishEquipping"));
 	ActionState = EActionState::EAS_Unoccupied;
 }
 

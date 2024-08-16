@@ -71,7 +71,6 @@ protected:
 	/**
 	 *  Animation Montages
 	 */
-	virtual void PlayAttackMontage() override;
 	virtual void AttackEnd() override;
 	virtual bool CanAttack() override;
 	
