@@ -28,6 +28,10 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	/* </AActor> */
 
+	/* <IHitInterface> */
+	void GetHit_Implementation(const FVector& ImpactPoint) override;
+	/* </IHitInterface> */
+
 	// declare getter and setter in class with FORCEINLINE macro
 	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
 	// const keyword means this function does not change anything in this class

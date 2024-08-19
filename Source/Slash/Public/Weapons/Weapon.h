@@ -31,11 +31,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	// UFUNCTION() need to be commented in inherited class
-	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
-
-	virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
-	
 	UFUNCTION()
 	void OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
@@ -46,6 +41,19 @@ protected:
 	bool bIsTwoHanded;
 
 private:
+	void PlayEquipSound();
+	void DisableSphereCollision();
+	void DisactivateEmbers();
+	void BoxTrace(FHitResult& BoxHit);
+	void ExecuteGetHit(FHitResult& BoxHit);
+	bool ActorIsSameType(AActor* OtherActor);
+
+	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
+	FVector BoxTraceExtent = FVector(5.f);
+
+	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
+	bool bShowBoxDebug = false;
+	
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 	float Damage = 20;
 
