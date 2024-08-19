@@ -15,6 +15,12 @@ ABaseCharacter::ABaseCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Attributes = CreateDefaultSubobject<UAttributeComponent>(TEXT("Attributes"));
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+}
+
+void ABaseCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 }
 
 void ABaseCharacter::BeginPlay()
@@ -23,22 +29,18 @@ void ABaseCharacter::BeginPlay()
 	
 }
 
-void ABaseCharacter::Attack()
+bool ABaseCharacter::CanAttack()
 {
+    return false;
 }
+
+void ABaseCharacter::Attack() {}
+
 void ABaseCharacter::Die() {}
 
-int32 ABaseCharacter::PlayAttackMontage() {
-	return PlayRandomMontageSection(AttackMontage);
-}
-
-int32 ABaseCharacter::PlayDeathMontage()
+bool ABaseCharacter::IsAlive()
 {
-	return PlayRandomMontageSection(DeathMontage);
-}
-
-void ABaseCharacter::PlayHitReactMontage(const FName &SectionName) {
-	PlayMontageSection(HitReactMontage, SectionName);
+    return Attributes && Attributes->IsAlive();
 }
 
 // determine which direction attack is from
@@ -105,6 +107,14 @@ void ABaseCharacter::DirectionalHitReact(const FVector &ImpactPoint)
 	// play animation montage
 	PlayHitReactMontage(SectionName);
 }
+
+void ABaseCharacter::HandleDamage(float DamageAmount)
+{
+	if (Attributes) {
+		Attributes->ReceiveDamage(DamageAmount);
+	}
+}
+
 void ABaseCharacter::PlayHitSound(const FVector &ImpactPoint)
 {
 	// play hit sound
@@ -116,6 +126,7 @@ void ABaseCharacter::PlayHitSound(const FVector &ImpactPoint)
 		);
     }
 }
+
 void ABaseCharacter::SpawnHitParticles(const FVector &ImpactPoint)
 {
 	if (HitParticles) {
@@ -127,12 +138,40 @@ void ABaseCharacter::SpawnHitParticles(const FVector &ImpactPoint)
 	}
 }
 
-void ABaseCharacter::HandleDamage(float DamageAmount)
+void ABaseCharacter::DisableCapsuleCollision()
 {
-	if (Attributes) {
-		Attributes->ReceiveDamage(DamageAmount);
-	}
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
+
+void ABaseCharacter::PlayHitReactMontage(const FName &SectionName)
+{
+    PlayMontageSection(HitReactMontage, SectionName);
+}
+
+void ABaseCharacter::PlayEquipMontage(const FName &SectionName)
+{
+    PlayMontageSection(EquipMontage, SectionName);
+}
+
+int32 ABaseCharacter::PlayAttackMontage() {
+	return PlayRandomMontageSection(AttackMontage);
+}
+
+int32 ABaseCharacter::PlayDeathMontage()
+{
+	return PlayRandomMontageSection(DeathMontage);
+}
+
+void ABaseCharacter::AttackEnd() {}
+
+void ABaseCharacter::SetWeaponCollisionEnabled(
+    ECollisionEnabled::Type CollisionEnabled) {
+  if (EquippedWeapon && EquippedWeapon->GetWeaponBox()) {
+    EquippedWeapon->GetWeaponBox()->SetCollisionEnabled(CollisionEnabled);
+    EquippedWeapon->ResetIgnoreActors();
+  }
+}
+
 void ABaseCharacter::PlayMontageSection(UAnimMontage *Montage, const FName &SectionName)
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
@@ -141,6 +180,7 @@ void ABaseCharacter::PlayMontageSection(UAnimMontage *Montage, const FName &Sect
 		AnimInstance->Montage_JumpToSection(SectionName, Montage);
 	}
 }
+
 int32 ABaseCharacter::PlayRandomMontageSection(UAnimMontage *Montage)
 {
 	const int32 NumMontageSections = Montage->GetNumSections();  
@@ -149,29 +189,4 @@ int32 ABaseCharacter::PlayRandomMontageSection(UAnimMontage *Montage)
 	const FName Section = Montage->GetSectionName(Selection);
 	PlayMontageSection(Montage, Section);
     return Selection;
-}
-bool ABaseCharacter::CanAttack()
-{
-    return false;
-}
-bool ABaseCharacter::IsAlive()
-{
-    return Attributes && Attributes->IsAlive();
-}
-void ABaseCharacter::AttackEnd() {}
-void ABaseCharacter::SetWeaponCollisionEnabled(
-    ECollisionEnabled::Type CollisionEnabled) {
-  if (EquippedWeapon && EquippedWeapon->GetWeaponBox()) {
-    EquippedWeapon->GetWeaponBox()->SetCollisionEnabled(CollisionEnabled);
-    EquippedWeapon->ResetIgnoreActors();
-  }
-}
-void ABaseCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
- 
-void ABaseCharacter::DisableCapsuleCollision()
-{
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
