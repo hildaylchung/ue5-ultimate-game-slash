@@ -65,7 +65,7 @@ private:
 	UHealthBarComponent* HealthBarWidget;
 
 	UPROPERTY(VisibleAnywhere)
-	UPawnSensingComponent* PawnSensing;
+	UPawnSensingComponent* PawnSensingComponent;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AWeapon> WeaponClass;

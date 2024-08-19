@@ -36,10 +36,10 @@ AEnemy::AEnemy()
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = false;
 
-	PawnSensing = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensing"));
-	PawnSensing->SetPeripheralVisionAngle(60.f);
-	PawnSensing->SightRadius = 1000.f;
-	PawnSensing->bOnlySensePlayers = false; 
+	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensing"));
+	PawnSensingComponent->SetPeripheralVisionAngle(60.f);
+	PawnSensingComponent->SightRadius = 1000.f;
+	PawnSensingComponent->bOnlySensePlayers = false; 
 }
 
 void AEnemy::BeginPlay()
@@ -51,8 +51,8 @@ void AEnemy::BeginPlay()
 	EnemyController = Cast<AAIController>(GetController());
 	MoveToTarget(PatrolTarget);
 
-	if (PawnSensing) {
-		PawnSensing->OnSeePawn.AddDynamic(this, &AEnemy::PawnSeen);
+	if (PawnSensingComponent) {
+		PawnSensingComponent->OnSeePawn.AddDynamic(this, &AEnemy::PawnSeen);
 	}
 
 	UWorld* World = GetWorld();

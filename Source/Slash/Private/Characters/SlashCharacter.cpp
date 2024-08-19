@@ -181,7 +181,6 @@ void ASlashCharacter::Arm()
 }
 void ASlashCharacter::FinishEquipping()
 {
-	DEBUG_MSG(TEXT("FinishEquipping"));
 	ActionState = EActionState::EAS_Unoccupied;
 }
 
