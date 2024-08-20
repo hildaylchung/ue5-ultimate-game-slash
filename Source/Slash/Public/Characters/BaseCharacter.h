@@ -27,6 +27,10 @@ protected:
 	virtual void BeginPlay() override;
 	/* </AActor> */
 
+	/* <IHitInterface> */
+	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
+	/* </IHitInterface> */
+
 	/* Combat related */
 	virtual bool CanAttack();
 	virtual void Attack();
@@ -60,24 +64,24 @@ private:
 	void PlayMontageSection(UAnimMontage* Montage, const FName& SectionName);
 	int32 PlayRandomMontageSection(UAnimMontage* Montage);
 	
-	UPROPERTY(EditAnywhere, Category = Sounds)
+	UPROPERTY(EditAnywhere, Category = Combat)
 	USoundBase* HitSound;
 
-	UPROPERTY(EditAnywhere, Category = VisualEffects)
+	UPROPERTY(EditAnywhere, Category = Combat)
 	UParticleSystem* HitParticles;
 
 	/** 
 	 * Animation Montages
 	 */
-	UPROPERTY(EditDefaultsOnly, Category = Animation)
+	UPROPERTY(EditDefaultsOnly, Category = Combat)
 	UAnimMontage* AttackMontage;
 	
-	UPROPERTY(EditDefaultsOnly, Category = Animation)
+	UPROPERTY(EditDefaultsOnly, Category = Combat)
 	UAnimMontage* DeathMontage;
 
-	UPROPERTY(EditDefaultsOnly, Category = Animation)
+	UPROPERTY(EditDefaultsOnly, Category = Combat)
 	UAnimMontage* HitReactMontage;
 	
-	UPROPERTY(EditDefaultsOnly, Category = Animation)
+	UPROPERTY(EditDefaultsOnly, Category = Combat)
 	UAnimMontage* EquipMontage;
 };
