@@ -50,9 +50,6 @@ void AWeapon::AttachMeshToSocket(USceneComponent *InParent, const FName& InSocke
 void AWeapon::ResetIgnoreActors()
 {
     IgnoreActors.Empty();
-    if (GetOwner()) {
-        IgnoreActors.AddUnique(GetOwner());
-    }
 }
 
 void AWeapon::BeginPlay() {
@@ -107,6 +104,7 @@ void AWeapon::BoxTrace(FHitResult &BoxHit)
     
     TArray<AActor*> ActorsToIgnore;
     ActorsToIgnore.Add(this);
+    ActorsToIgnore.Add(GetOwner());
 
     for (AActor* Actor : IgnoreActors) {
         ActorsToIgnore.AddUnique(Actor);
