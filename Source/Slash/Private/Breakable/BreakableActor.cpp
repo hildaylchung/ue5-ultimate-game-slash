@@ -37,7 +37,7 @@ void ABreakableActor::Tick(float DeltaTime)
 
 }
 
-void ABreakableActor::GetHit_Implementation(const FVector &ImpactPoint)
+void ABreakableActor::GetHit_Implementation(const FVector &ImpactPoint, AActor* Hitter)
 {
 	// fix infinite loop because of  Geometry Collection many GetHit events emitted from lots of meshes in the geometry collection.
 	if (bBroken) return;

@@ -29,7 +29,7 @@ public:
 	/* </AActor> */
 
 	/* <IHitInterface> */
-	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
+	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
 	/* </IHitInterface> */
 
 	// declare getter and setter in class with FORCEINLINE macro

@@ -131,7 +131,7 @@ void AWeapon::ExecuteGetHit(FHitResult& BoxHit) {
     if (IHitInterface* HitInterface = Cast<IHitInterface>(BoxHit.GetActor())) {
         // blueprint native event
         // call GetHit_Implementation instead of blueprint if available
-        HitInterface->Execute_GetHit(BoxHit.GetActor(), BoxHit.ImpactPoint);
+        HitInterface->Execute_GetHit(BoxHit.GetActor(), BoxHit.ImpactPoint, GetOwner());
     }
 }
 

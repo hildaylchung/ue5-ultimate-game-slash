@@ -25,5 +25,5 @@ public:
 	// use = 0 for declaring pure virtual function 
 	// i.e. it can only be defined in the inherited class
 	UFUNCTION(BlueprintNativeEvent)
-	void GetHit(const FVector& ImpactPoint);
+	void GetHit(const FVector& ImpactPoint, AActor* Hitter);
 };
