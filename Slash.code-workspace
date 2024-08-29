@@ -3,10 +3,6 @@
 		{
 			"name": "Slash",
 			"path": "."
-		},
-		{
-			"name": "UE5",
-			"path": "/Users/Shared/Epic Games/UE_5.4"
 		}
 	],
 	"settings": {
