@@ -201,8 +201,12 @@ void ASlashCharacter::Arm() {
 	CharacterState = ECharacterState::ESC_EquippedOneHandedWeapon;
 }
 
+void ASlashCharacter::LockEnemy(AActor* Enemy) {
+	CombatTarget = Enemy;
+}
+
 void ASlashCharacter::AttachWeaponToBack() {
-    if (EquippedWeapon) {
+        if (EquippedWeapon) {
 		EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("SpineSocket"));
 	}
 }

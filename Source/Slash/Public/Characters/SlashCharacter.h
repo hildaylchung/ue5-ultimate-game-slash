@@ -61,6 +61,7 @@ protected:
 	bool CanArm();
 	void Disarm();
 	void Arm();
+	void LockEnemy(AActor* Enemy);
 	
 	UFUNCTION(BlueprintCallable)
 	void AttachWeaponToBack();
@@ -95,6 +96,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputAction* DodgeAction;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UCameraComponent* ViewCamera;
+
 private:
 	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
 	
@@ -105,9 +109,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* CameraBoom;
-
-	UPROPERTY(VisibleAnywhere)
-	UCameraComponent* ViewCamera;
 
 	UPROPERTY(VisibleAnywhere, Category = Hair)
 	UGroomComponent* Hair;

@@ -67,7 +67,7 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UAttributeComponent* Attributes;
 
-	UPROPERTY(BlueprintReadOnly, Category = Combat)
+	UPROPERTY(BlueprintReadWrite, Category = Combat)
 	AActor* CombatTarget;
 
 	UPROPERTY(EditAnywhere, Category = Combat)
