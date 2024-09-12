@@ -26,8 +26,9 @@ public:
 	
 	/* <AActor> */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 	/* </AActor> */
-
+	
 	/* <IHitInterface> */
 	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
 	/* </IHitInterface> */
