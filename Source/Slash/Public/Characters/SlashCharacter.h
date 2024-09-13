@@ -13,6 +13,7 @@ class UInputAction;
 class USpringArmComponent;
 class UCameraComponent;
 class UGroomComponent;
+class USlashOverlay;
 class AItem;
 class UAnimMontage;
 
@@ -101,6 +102,11 @@ protected:
 	UCameraComponent* ViewCamera;
 
 private:
+	void InitializeSlashOverlay();
+	void InitializeMappingContext();
+	void SetHUDHealth();
+	bool IsUnoccupied();
+
 	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
 	
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
@@ -119,4 +125,10 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly)
 	AItem* OverlappingItem;
+
+	UPROPERTY()
+	APlayerController* PlayerController;
+
+	UPROPERTY()
+	USlashOverlay* SlashOverlay;
 };

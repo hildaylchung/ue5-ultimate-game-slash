@@ -16,12 +16,15 @@ class SLASH_API ASlashHUD : public AHUD
 {
 	GENERATED_BODY()
 
+protected:
+	virtual void BeginPlay() override;
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = Slash)
 	TSubclassOf<class USlashOverlay> SlashOverlayClass;
 
 	USlashOverlay* SlashOverlay;
 
-protected:
-	virtual void BeginPlay() override;
+public:
+	FORCEINLINE USlashOverlay* GetSlashOverlay() const { return SlashOverlay; };
 };

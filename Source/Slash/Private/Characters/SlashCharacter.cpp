@@ -7,10 +7,13 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SkeletalMeshComponent.h" 
+#include "Components/AttributeComponent.h"
 #include "GameFramework/CharacterMovementComponent.h" 
 #include "GroomComponent.h" 
 #include "Items/Item.h"
 #include "Weapons/Weapon.h"
+#include "HUD/SlashHUD.h"
+#include "HUD/SlashOverlay.h"
 
 
 // Sets default values
@@ -71,12 +74,13 @@ void ASlashCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 float ASlashCharacter::TakeDamage(float DamageAmount, FDamageEvent const &DamageEvent, AController *EventInstigator, AActor *DamageCauser) {
 	HandleDamage(DamageAmount);
+	SetHUDHealth();
 	return DamageAmount;
 }
 
-void ASlashCharacter::GetHit_Implementation(const FVector &ImpactPoint,
-                                            AActor *Hitter) {
-        Super::GetHit_Implementation(ImpactPoint, Hitter);
+void ASlashCharacter::GetHit_Implementation(const FVector &ImpactPoint, AActor *Hitter) {
+	Super::GetHit_Implementation(ImpactPoint, Hitter);
+	SetWeaponCollisionEnabled(ECollisionEnabled::NoCollision);
 	ActionState = EActionState::EAS_HitReaction;
 }
 
@@ -87,12 +91,8 @@ void ASlashCharacter::BeginPlay()
 
 	Tags.Add(FName("EngageableTarget"));
 	
-	if (APlayerController* PlayerController = Cast<APlayerController>(GetController())) {
-		UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
-		if (Subsystem) {
-			Subsystem->AddMappingContext(SlashContext, 0);
-		}
-	}
+	InitializeSlashOverlay();
+	InitializeMappingContext();
 }
 
 void ASlashCharacter::Move(const FInputActionValue &Value) {
@@ -133,7 +133,9 @@ void ASlashCharacter::Look(const FInputActionValue &Value) {
 
 void ASlashCharacter::Jump()
 {
-	ACharacter::Jump();
+	if (IsUnoccupied()) {
+		Super::Jump();
+	}
 }
 
 void ASlashCharacter::Dodge() {}
@@ -229,3 +231,35 @@ void ASlashCharacter::FinishEquipping()
 void ASlashCharacter::HitReactEnd() {
 	ActionState = EActionState::EAS_Unoccupied;
 }
+
+void ASlashCharacter::InitializeSlashOverlay() {
+	PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController) {
+		if (ASlashHUD* SlashHUD = Cast<ASlashHUD>(PlayerController->GetHUD())) {
+			SlashOverlay = SlashHUD->GetSlashOverlay();
+			if (SlashOverlay && Attributes) {
+				SetHUDHealth();
+				SlashOverlay->SetStaminaBarPercent(1.f);
+				SlashOverlay->SetGold(0);
+				SlashOverlay->SetSouls(0);
+			}
+		}
+	}
+}
+
+void ASlashCharacter::InitializeMappingContext() {
+	if (PlayerController) {
+		UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
+		if (Subsystem) {
+			Subsystem->AddMappingContext(SlashContext, 0);
+		}
+	}
+}
+
+void ASlashCharacter::SetHUDHealth()
+{
+	if (SlashOverlay && Attributes) {
+		SlashOverlay->SetHealthBarPercent(Attributes->GetHealthPercent());
+	}
+}
+bool ASlashCharacter::IsUnoccupied() { return ActionState == EActionState::EAS_Unoccupied; }

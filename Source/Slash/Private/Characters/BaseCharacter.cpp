@@ -16,6 +16,7 @@ ABaseCharacter::ABaseCharacter()
 
 	Attributes = CreateDefaultSubobject<UAttributeComponent>(TEXT("Attributes"));
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+	GetCapsuleComponent()->CanCharacterStepUpOn = ECB_No;
 }
 
 void ABaseCharacter::Tick(float DeltaTime)
