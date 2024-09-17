@@ -38,6 +38,7 @@ public:
 	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
 	// const keyword means this function does not change anything in this class
 	FORCEINLINE ECharacterState GetCharacterState() const { return CharacterState; }
+	FORCEINLINE EActionState GetActionState() const { return ActionState; }
 
 protected:
 	/* <AActor> */
@@ -64,6 +65,8 @@ protected:
 	void Disarm();
 	void Arm();
 	void LockEnemy(AActor* Enemy);
+	
+	virtual void Die() override;
 	
 	UFUNCTION(BlueprintCallable)
 	void AttachWeaponToBack();

@@ -81,7 +81,10 @@ float ASlashCharacter::TakeDamage(float DamageAmount, FDamageEvent const &Damage
 void ASlashCharacter::GetHit_Implementation(const FVector &ImpactPoint, AActor *Hitter) {
 	Super::GetHit_Implementation(ImpactPoint, Hitter);
 	SetWeaponCollisionEnabled(ECollisionEnabled::NoCollision);
-	ActionState = EActionState::EAS_HitReaction;
+
+	if (IsAlive()) {
+		ActionState = EActionState::EAS_HitReaction;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -210,6 +213,12 @@ void ASlashCharacter::Arm() {
 
 void ASlashCharacter::LockEnemy(AActor* Enemy) {
 	CombatTarget = Enemy;
+}
+
+void ASlashCharacter::Die() {
+	Super::Die();
+	ActionState = EActionState::EAS_Dead;
+	DisableMeshCollision();
 }
 
 void ASlashCharacter::AttachWeaponToBack() {

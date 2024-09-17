@@ -47,9 +47,16 @@ bool ABaseCharacter::CanAttack()
     return false;
 }
 
-void ABaseCharacter::Attack() {}
+void ABaseCharacter::Attack() {
+	if (CombatTarget && CombatTarget->ActorHasTag(FName("Dead"))) {
+		CombatTarget = nullptr;
+	}
+}
 
-void ABaseCharacter::Die() {}
+void ABaseCharacter::Die() {
+	Tags.Add(FName("Dead"));
+	PlayDeathMontage();
+}
 
 bool ABaseCharacter::IsAlive()
 {
@@ -156,9 +163,12 @@ void ABaseCharacter::DisableCapsuleCollision()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
-void ABaseCharacter::PlayHitReactMontage(const FName &SectionName)
-{
-    PlayMontageSection(HitReactMontage, SectionName);
+void ABaseCharacter::DisableMeshCollision() {
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void ABaseCharacter::PlayHitReactMontage(const FName &SectionName) {
+        PlayMontageSection(HitReactMontage, SectionName);
 }
 
 void ABaseCharacter::PlayEquipMontage(const FName &SectionName)
@@ -172,7 +182,13 @@ int32 ABaseCharacter::PlayAttackMontage() {
 
 int32 ABaseCharacter::PlayDeathMontage()
 {
-	return PlayRandomMontageSection(DeathMontage);
+	const int32 Selection = PlayRandomMontageSection(DeathMontage);
+	TEnumAsByte<EDeathPose> Pose(Selection);
+	if (Pose < EDeathPose::EDP_MAX) {
+		DeathPose = Pose;
+	}
+
+	return Selection;
 }
 
 void ABaseCharacter::StopAttackMontage() {
